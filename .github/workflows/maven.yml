@@ -1,12 +1,16 @@
-name: Maven Caching Test
+name: Auto Code Review Bot
 
+# CHỈ KÍCH HOẠT KHI CÓ PULL REQUEST VÀO NHÁNH MAIN
 on:
-  push:
+  pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
+  review:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Cấp quyền cho Bot được phép viết Comment vào PR
 
     steps:
     - name: Checkout Code
@@ -17,8 +21,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        # DÒNG QUAN TRỌNG NHẤT CỦA BÀI 6 NẰM Ở ĐÂY:
-        cache: 'maven'
 
-    - name: Build Project
-      run: mvn clean compile
+    # Bot soi lỗi Checkstyle và comment trực tiếp vào dòng code sai
+    - name: Run Checkstyle & Post Comments
+      uses: reviewdog/action-checkstyle@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        reporter: github-pr-review 
+        level: warning

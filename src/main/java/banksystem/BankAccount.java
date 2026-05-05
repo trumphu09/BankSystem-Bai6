@@ -1,7 +1,13 @@
 package banksystem;
 
 public class BankAccount {
-    public void helloCaching() {
-        System.out.println("Test Caching lan 2");
+    private double balance;
+
+    public BankAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    public double getBalance() {
+        return balance;
     }
 }
